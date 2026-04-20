@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Analytics Pro - Advanced Tracking & Risk Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metric-large {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .positive {
+            color: #10b981;
+            background: #d1fae5;
+        }
+
+        .negative {
+            color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .neutral {
+            color: #6b7280;
+            background: #f3f4f6;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 600;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .risk-indicator {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .risk-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .risk-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .risk-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .metric-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+
+        .stock-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stock-option {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .stock-option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .stock-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .stock-option .ticker {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .stock-option .name {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .stock-option.selected .name {
+            color: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Portfolio Analytics Pro</h1>
+            <p>Advanced Portfolio Tracking with Risk Management & Global Index Comparison</p>
+        </div>
+
+        <div class="alert alert-info">
+            <strong>💡 Getting Started:</strong> Add stocks to your portfolio, set your investment amounts, and track performance against global indices with real-time risk analysis.
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2>💰 Portfolio Value</h2>
+                <div class="metric-large" id="totalValue">$0.00</div>
+                <div class="metric-change positive" id="totalChange">+$0.00 (0.00%)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📈 Total Return</h2>
+                <div class="metric-large" id="totalReturn">0.00%</div>
+                <div class="metric-row">
+                    <span class="metric-label">vs S&P 500:</span>
+                    <span class="metric-value positive" id="vsSP500">--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">vs NASDAQ:</span>
+                    <span class="metric-value positive" id="vsNASDAQ">--</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚠️ Risk Metrics</h2>
+                <div class="metric-row">
+                    <span class="metric-label">Portfolio Beta:</span>
+                    <span class="metric-value" id="portfolioBeta">--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Volatility:</span>
+                    <span class="metric-value" id="portfolioVolatility">--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Sharpe Ratio:</span>
+                    <span class="metric-value" id="sharpeRatio">--</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Risk Level:</span>
+                    <span class="risk-indicator risk-medium" id="riskLevel">Medium</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🌍 Global Index Performance</h2>
+                <div class="metric-row">
+                    <span class="metric-label">S&P 500:</span>
+                    <span class="metric-value positive">+12.5%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">NASDAQ:</span>
+                    <span class="metric-value positive">+18.3%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">FTSE 100:</span>
+                    <span class="metric-value positive">+8.7%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Nikkei 225:</span>
+                    <span class="metric-value positive">+15.2%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab active" onclick="switchTab('add')">➕ Add Stock</button>
+            <button class="tab" onclick="switchTab('portfolio')">📋 My Portfolio</button>
+            <button class="tab" onclick="switchTab('analysis')">📊 Analysis</button>
+            <button class="tab" onclick="switchTab('risk')">⚠️ Risk Management</button>
+        </div>
+
+        <div id="addTab" class="tab-content active">
+            <div class="card">
+                <h2>Add Stock to Portfolio</h2>
+                <div class="alert alert-info">
+                    <strong>Select from curated stocks</strong> or add custom ticker below
+                </div>
+
+                <div class="stock-selector" id="stockSelector">
+                    <!-- Popular stocks will be dynamically added here -->
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div class="input-group">
+                        <label>Stock Ticker</label>
+                        <input type="text" id="ticker" placeholder="e.g., AAPL" style="text-transform: uppercase;">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Number of Shares</label>
+                        <input type="number" id="shares" placeholder="10" min="0" step="0.01">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Purchase Price per Share ($)</label>
+                        <input type="number" id="purchasePrice" placeholder="150.00" min="0" step="0.01">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Current Price per Share ($)</label>
+                        <input type="number" id="currentPrice" placeholder="165.00" min="0" step="0.01">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="addStock()" style="width: 100%;">
+                        Add to Portfolio
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="portfolioTab" class="tab-content">
+            <div class="card">
+                <h2>My Portfolio Holdings</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Shares</th>
+                                <th>Avg Cost</th>
+                                <th>Current Price</th>
+                                <th>Market Value</th>
+                                <th>Gain/Loss</th>
+                                <th>Return %</th>
+                                <th>Weight</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="portfolioTable">
+                            <tr>
+                                <td colspan="9" style="text-align: center; color: #6b7280;">
+                                    No stocks in portfolio. Add your first stock above!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="analysisTab" class="tab-content">
+            <div class="card">
+                <h2>Performance Analysis</h2>
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 15px; color: #333;">Portfolio vs Global Indices (YTD)</h3>
+                    <div id="performanceChart">
+                        <div class="metric-row">
+                            <span class="metric-label">Your Portfolio:</span>
+                            <span class="metric-value" id="portfolioYTD">--</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">S&P 500:</span>
+                            <span class="metric-value positive">+12.5%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">NASDAQ-100:</span>
+                            <span class="metric-value positive">+18.3%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">FTSE 100:</span>
+                            <span class="metric-value positive">+8.7%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">DAX:</span>
+                            <span class="metric-value positive">+10.2%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Nikkei 225:</span>
+                            <span class="metric-value positive">+15.2%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">MSCI World:</span>
+                            <span class="metric-value positive">+11.8%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container" style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">Sector Allocation</h3>
+                    <div id="sectorAllocation">
+                        <p style="color: #6b7280; text-align: center;">Add stocks to see sector breakdown</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="riskTab" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h2>Risk Assessment</h2>
+                    <div class="metric-row">
+                        <span class="metric-label">Value at Risk (95%):</span>
+                        <span class="metric-value" id="var95">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Max Drawdown:</span>
+                        <span class="metric-value negative" id="maxDrawdown">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Correlation to Market:</span>
+                        <span class="metric-value" id="correlation">--</span>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div class="alert alert-warning" id="riskAlert" style="display: none;">
+                            <strong>⚠️ Risk Warning:</strong> <span id="riskMessage"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Diversification Score</h2>
+                    <div class="metric-large" id="diversificationScore">--</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="diversificationBar" style="width: 0%"></div>
+                    </div>
+                    <p style="color: #6b7280; margin-top: 10px; font-size: 13px;">
+                        A score above 70 indicates good diversification
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h2>Recommendations</h2>
+                    <div id="recommendations">
+                        <p style="color: #6b7280;">Add stocks to receive personalized recommendations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Portfolio data store
+        let portfolio = JSON.parse(localStorage.getItem('portfolio')) || [];
+
+        // Popular stocks with realistic data
+        const popularStocks = [
+            { ticker: 'AAPL', name: 'Apple', sector: 'Technology', beta: 1.2 },
+            { ticker: 'MSFT', name: 'Microsoft', sector: 'Technology', beta: 1.1 },
+            { ticker: 'GOOGL', name: 'Alphabet', sector: 'Technology', beta: 1.3 },
+            { ticker: 'AMZN', name: 'Amazon', sector: 'Consumer', beta: 1.4 },
+            { ticker: 'TSLA', name: 'Tesla', sector: 'Automotive', beta: 2.0 },
+            { ticker: 'NVDA', name: 'NVIDIA', sector: 'Technology', beta: 1.8 },
+            { ticker: 'JPM', name: 'JPMorgan', sector: 'Financial', beta: 1.0 },
+            { ticker: 'JNJ', name: 'Johnson & Johnson', sector: 'Healthcare', beta: 0.7 },
+            { ticker: 'V', name: 'Visa', sector: 'Financial', beta: 0.9 },
+            { ticker: 'WMT', name: 'Walmart', sector: 'Retail', beta: 0.6 },
+            { ticker: 'PG', name: 'Procter & Gamble', sector: 'Consumer', beta: 0.5 },
+            { ticker: 'DIS', name: 'Disney', sector: 'Entertainment', beta: 1.2 }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderStockSelector();
+            updatePortfolio();
+        });
+
+        function renderStockSelector() {
+            const selector = document.getElementById('stockSelector');
+            selector.innerHTML = popularStocks.map(stock => `
+                <div class="stock-option" onclick="selectStock('${stock.ticker}', '${stock.name}')">
+                    <div class="ticker">${stock.ticker}</div>
+                    <div class="name">${stock.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectStock(ticker, name) {
+            document.getElementById('ticker').value = ticker;
+            // Remove previous selections
+            document.querySelectorAll('.stock-option').forEach(el => el.classList.remove('selected'));
+            // Highlight selected
+            event.currentTarget.classList.add('selected');
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            if (tabName === 'analysis' || tabName === 'risk') {
+                updateAnalysis();
+            }
+        }
+
+        function addStock() {
+            const ticker = document.getElementById('ticker').value.toUpperCase();
+            const shares = parseFloat(document.getElementById('shares').value);
+            const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
+            const currentPrice = parseFloat(document.getElementById('currentPrice').value);
+
+            if (!ticker || !shares || !purchasePrice || !currentPrice) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Get stock info
+            const stockInfo = popularStocks.find(s => s.ticker === ticker) || {
+                ticker: ticker,
+                name: ticker,
+                sector: 'Other',
+                beta: 1.0
+            };
+
+            const stock = {
+                ticker: ticker,
+                name: stockInfo.name,
+                sector: stockInfo.sector,
+                beta: stockInfo.beta,
+                shares: shares,
+                purchasePrice: purchasePrice,
+                currentPrice: currentPrice,
+                dateAdded: new Date().toISOString()
+            };
+
+            // Check if stock already exists
+            const existingIndex = portfolio.findIndex(s => s.ticker === ticker);
+            if (existingIndex >= 0) {
+                // Update existing position
+                const existing = portfolio[existingIndex];
+                const totalShares = existing.shares + shares;
+                const avgPrice = ((existing.shares * existing.purchasePrice) + (shares * purchasePrice)) / totalShares;
+                portfolio[existingIndex].shares = totalShares;
+                portfolio[existingIndex].purchasePrice = avgPrice;
+                portfolio[existingIndex].currentPrice = currentPrice;
+            } else {
+                portfolio.push(stock);
+            }
+
+            localStorage.setItem('portfolio', JSON.stringify(portfolio));
+
+            // Clear form
+            document.getElementById('ticker').value = '';
+            document.getElementById('shares').value = '';
+            document.getElementById('purchasePrice').value = '';
+            document.getElementById('currentPrice').value = '';
+
+            // Remove selection
+            document.querySelectorAll('.stock-option').forEach(el => el.classList.remove('selected'));
+
+            updatePortfolio();
+
+            // Show success message
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.innerHTML = `<strong>✓ Success!</strong> ${ticker} added to your portfolio`;
+            document.querySelector('.container').insertBefore(alert, document.querySelector('.dashboard-grid'));
+            setTimeout(() => alert.remove(), 3000);
+        }
+
+        function removeStock(ticker) {
+            if (confirm(`Remove ${ticker} from portfolio?`)) {
+                portfolio = portfolio.filter(s => s.ticker !== ticker);
+                localStorage.setItem('portfolio', JSON.stringify(portfolio));
+                updatePortfolio();
+            }
+        }
+
+        function updatePortfolio() {
+            if (portfolio.length === 0) {
+                document.getElementById('portfolioTable').innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; color: #6b7280;">
+                            No stocks in portfolio. Add your first stock above!
+                        </td>
+                    </tr>
+                `;
+                resetMetrics();
+                return;
+            }
+
+            // Calculate metrics
+            let totalCost = 0;
+            let totalValue = 0;
+
+            portfolio.forEach(stock => {
+                totalCost += stock.shares * stock.purchasePrice;
+                totalValue += stock.shares * stock.currentPrice;
+            });
+
+            const totalGainLoss = totalValue - totalCost;
+            const totalReturn = ((totalValue - totalCost) / totalCost) * 100;
+
+            // Update summary cards
+            document.getElementById('totalValue').textContent = `$${totalValue.toFixed(2)}`;
+            const changeClass = totalGainLoss >= 0 ? 'positive' : 'negative';
+            const changeSymbol = totalGainLoss >= 0 ? '+' : '';
+            document.getElementById('totalChange').className = `metric-change ${changeClass}`;
+            document.getElementById('totalChange').textContent = 
+                `${changeSymbol}$${totalGainLoss.toFixed(2)} (${changeSymbol}${totalReturn.toFixed(2)}%)`;
+
+            document.getElementById('totalReturn').textContent = `${changeSymbol}${totalReturn.toFixed(2)}%`;
+
+            // Compare with indices
+            const sp500Return = 12.5;
+            const nasdaqReturn = 18.3;
+
+            const vsSP = totalReturn - sp500Return;
+            const vsNQ = totalReturn - nasdaqReturn;
+
+            document.getElementById('vsSP500').textContent = `${vsSP >= 0 ? '+' : ''}${vsSP.toFixed(2)}%`;
+            document.getElementById('vsSP500').className = `metric-value ${vsSP >= 0 ? 'positive' : 'negative'}`;
+
+            document.getElementById('vsNASDAQ').textContent = `${vsNQ >= 0 ? '+' : ''}${vsNQ.toFixed(2)}%`;
+            document.getElementById('vsNASDAQ').className = `metric-value ${vsNQ >= 0 ? 'positive' : 'negative'}`;
+
+            // Calculate risk metrics
+            const portfolioBeta = calculatePortfolioBeta();
+            const volatility = calculateVolatility(totalReturn);
+            const sharpeRatio = calculateSharpe(totalReturn, volatility);
+
+            document.getElementById('portfolioBeta').textContent = portfolioBeta.toFixed(2);
+            document.getElementById('portfolioVolatility').textContent = `${volatility.toFixed(2)}%`;
+            document.getElementById('sharpeRatio').textContent = sharpeRatio.toFixed(2);
+
+            // Risk level
+            let riskLevel = 'Low';
+            let riskClass = 'risk-low';
+            if (portfolioBeta > 1.3 || volatility > 25) {
+                riskLevel = 'High';
+                riskClass = 'risk-high';
+            } else if (portfolioBeta > 1.0 || volatility > 15) {
+                riskLevel = 'Medium';
+                riskClass = 'risk-medium';
+            }
+
+            document.getElementById('riskLevel').textContent = riskLevel;
+            document.getElementById('riskLevel').className = `risk-indicator ${riskClass}`;
+
+            // Update table
+            const tableHtml = portfolio.map(stock => {
+                const costBasis = stock.shares * stock.purchasePrice;
+                const marketValue = stock.shares * stock.currentPrice;
+                const gainLoss = marketValue - costBasis;
+                const returnPct = ((marketValue - costBasis) / costBasis) * 100;
+                const weight = (marketValue / totalValue) * 100;
+
+                return `
+                    <tr>
+                        <td><strong>${stock.ticker}</strong><br><small style="color: #6b7280;">${stock.name}</small></td>
+                        <td>${stock.shares}</td>
+                        <td>$${stock.purchasePrice.toFixed(2)}</td>
+                        <td>$${stock.currentPrice.toFixed(2)}</td>
+                        <td><strong>$${marketValue.toFixed(2)}</strong></td>
+                        <td class="${gainLoss >= 0 ? 'positive' : 'negative'}">
+                            ${gainLoss >= 0 ? '+' : ''}$${gainLoss.toFixed(2)}
+                        </td>
+                        <td class="${returnPct >= 0 ? 'positive' : 'negative'}">
+                            ${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(2)}%
+                        </td>
+                        <td>${weight.toFixed(1)}%</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="removeStock('${stock.ticker}')" 
+                                    style="padding: 6px 12px; font-size: 12px;">
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('portfolioTable').innerHTML = tableHtml;
+
+            // Update progress bar
+            const progressFill = document.querySelector('.progress-fill');
+            progressFill.style.width = `${Math.min(Math.abs(totalReturn) * 5, 100)}%`;
+        }
+
+        function calculatePortfolioBeta() {
+            if (portfolio.length === 0) return 0;
+
+            let totalValue = portfolio.reduce((sum, stock) => 
+                sum + (stock.shares * stock.currentPrice), 0);
+
+            let weightedBeta = portfolio.reduce((sum, stock) => {
+                const weight = (stock.shares * stock.currentPrice) / totalValue;
+                return sum + (stock.beta * weight);
+            }, 0);
+
+            return weightedBeta;
+        }
+
+        function calculateVolatility(returns) {
+            // Simplified volatility based on beta and return variance
+            const beta = calculatePortfolioBeta();
+            const baseVol = 15; // Market volatility
+            return baseVol * beta;
+        }
+
+        function calculateSharpe(returns, volatility) {
+            const riskFreeRate = 4.5; // Current risk-free rate
+            if (volatility === 0) return 0;
+            return (returns - riskFreeRate) / volatility;
+        }
+
+        function updateAnalysis() {
+            if (portfolio.length === 0) return;
+
+            // Calculate total return
+            let totalCost = 0;
+            let totalValue = 0;
+
+            portfolio.forEach(stock => {
+                totalCost += stock.shares * stock.purchasePrice;
+                totalValue += stock.shares * stock.currentPrice;
+            });
+
+            const totalReturn = ((totalValue - totalCost) / totalCost) * 100;
+            const returnClass = totalReturn >= 0 ? 'positive' : 'negative';
+
+            document.getElementById('portfolioYTD').textContent = 
+                `${totalReturn >= 0 ? '+' : ''}${totalReturn.toFixed(2)}%`;
+            document.getElementById('portfolioYTD').className = `metric-value ${returnClass}`;
+
+            // Sector allocation
+            const sectors = {};
+            portfolio.forEach(stock => {
+                const value = stock.shares * stock.currentPrice;
+                sectors[stock.sector] = (sectors[stock.sector] || 0) + value;
+            });
+
+            const sectorHtml = Object.entries(sectors).map(([sector, value]) => {
+                const pct = (value / totalValue) * 100;
+                return `
+                    <div class="metric-row">
+                        <span class="metric-label">${sector}:</span>
+                        <span class="metric-value">${pct.toFixed(1)}%</span>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('sectorAllocation').innerHTML = sectorHtml;
+
+            // Risk analysis
+            const var95 = totalValue * 0.05 * calculatePortfolioBeta();
+            document.getElementById('var95').textContent = `-$${var95.toFixed(2)}`;
+
+            const maxDD = totalReturn * 0.3; // Simplified
+            document.getElementById('maxDrawdown').textContent = `${maxDD.toFixed(2)}%`;
+
+            const correlation = Math.min(calculatePortfolioBeta() / 1.5, 1);
+            document.getElementById('correlation').textContent = correlation.toFixed(2);
+
+            // Diversification score
+            const uniqueSectors = Object.keys(sectors).length;
+            const concentration = Math.max(...Object.values(sectors)) / totalValue;
+            const diversScore = Math.min((uniqueSectors * 20) * (1 - concentration + 0.3), 100);
+
+            document.getElementById('diversificationScore').textContent = diversScore.toFixed(0);
+            document.getElementById('diversificationBar').style.width = `${diversScore}%`;
+
+            // Risk warnings
+            const beta = calculatePortfolioBeta();
+            if (beta > 1.5) {
+                document.getElementById('riskAlert').style.display = 'block';
+                document.getElementById('riskMessage').textContent = 
+                    'Your portfolio has high market sensitivity (Beta > 1.5). Consider adding defensive stocks.';
+            } else if (concentration > 0.5) {
+                document.getElementById('riskAlert').style.display = 'block';
+                document.getElementById('riskMessage').textContent = 
+                    'Over 50% of your portfolio is in one sector. Consider diversifying.';
+            } else {
+                document.getElementById('riskAlert').style.display = 'none';
+            }
+
+            // Recommendations
+            let recommendations = [];
+            if (diversScore < 50) {
+                recommendations.push('• Add stocks from different sectors to improve diversification');
+            }
+            if (beta > 1.5) {
+                recommendations.push('• Consider defensive stocks (Beta < 0.8) to reduce volatility');
+            }
+            if (uniqueSectors < 3) {
+                recommendations.push('• Expand to at least 3-4 different sectors');
+            }
+            if (portfolio.length < 5) {
+                recommendations.push('• Build a minimum of 5-10 holdings for adequate diversification');
+            }
+            if (recommendations.length === 0) {
+                recommendations.push('✓ Your portfolio shows good diversification');
+                recommendations.push('✓ Risk metrics are within acceptable ranges');
+            }
+
+            document.getElementById('recommendations').innerHTML = 
+                recommendations.map(r => `<p style="margin: 8px 0; color: #374151;">${r}</p>`).join('');
+        }
+
+        function resetMetrics() {
+            document.getElementById('totalValue').textContent = '$0.00';
+            document.getElementById('totalChange').textContent = '+$0.00 (0.00%)';
+            document.getElementById('totalReturn').textContent = '0.00%';
+            document.getElementById('vsSP500').textContent = '--';
+            document.getElementById('vsNASDAQ').textContent = '--';
+            document.getElementById('portfolioBeta').textContent = '--';
+            document.getElementById('portfolioVolatility').textContent = '--';
+            document.getElementById('sharpeRatio').textContent = '--';
+            document.getElementById('riskLevel').textContent = 'Low';
+        }
+    </script>
+</body>
+</html>
